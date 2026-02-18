@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { communityRequests, CommunityRequest } from "@/data/community-requests";
 import { businesses, categories } from "@/data/listings";
+import { supabase } from "@/lib/supabase";
 
 function slugify(name: string) {
   return name
@@ -57,9 +58,15 @@ export default function AskPage() {
   const openCount = communityRequests.filter((r) => !r.resolved).length;
   const resolvedCount = communityRequests.filter((r) => r.resolved).length;
 
-  const handlePostQuestion = (e: React.FormEvent) => {
+  const handlePostQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Connect to backend
+
+    await supabase.from("community_questions").insert({
+      question: questionText,
+      author: questionAuthor,
+      category: questionCategory || null,
+    });
+
     setQuestionSubmitted(true);
     setTimeout(() => {
       setQuestionSubmitted(false);
@@ -70,9 +77,20 @@ export default function AskPage() {
     }, 3000);
   };
 
-  const handleSuggestBusiness = (e: React.FormEvent, requestId: string) => {
+  const handleSuggestBusiness = async (e: React.FormEvent, requestId: string) => {
     e.preventDefault();
-    // TODO: Connect to backend
+
+    // Try to save to Supabase (for questions that have numeric IDs from the DB)
+    const numericId = parseInt(requestId);
+    if (!isNaN(numericId)) {
+      await supabase.from("community_responses").insert({
+        question_id: numericId,
+        business_name: suggestBusiness,
+        recommended_by: suggestAuthor,
+        comment: suggestComment,
+      });
+    }
+
     setSuggestSubmitted(requestId);
     setTimeout(() => {
       setSuggestSubmitted(null);

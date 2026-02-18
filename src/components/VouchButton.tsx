@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface VouchButtonProps {
   businessName: string;
@@ -10,17 +11,46 @@ interface VouchButtonProps {
 export default function VouchButton({ businessName, initialVouches }: VouchButtonProps) {
   const [vouches, setVouches] = useState(initialVouches);
   const [hasVouched, setHasVouched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleVouch = () => {
-    if (hasVouched) return;
-    setVouches((v) => v + 1);
-    setHasVouched(true);
+  // Load vouch count from Supabase on mount
+  useEffect(() => {
+    const storageKey = `vouched_${businessName}`;
+    if (localStorage.getItem(storageKey)) {
+      setHasVouched(true);
+    }
+
+    supabase
+      .from("vouches")
+      .select("id", { count: "exact", head: true })
+      .eq("business_name", businessName)
+      .then(({ count }) => {
+        if (count !== null) {
+          setVouches(initialVouches + count);
+        }
+      });
+  }, [businessName, initialVouches]);
+
+  const handleVouch = async () => {
+    if (hasVouched || loading) return;
+    setLoading(true);
+
+    const { error } = await supabase
+      .from("vouches")
+      .insert({ business_name: businessName });
+
+    if (!error) {
+      setVouches((v) => v + 1);
+      setHasVouched(true);
+      localStorage.setItem(`vouched_${businessName}`, "true");
+    }
+    setLoading(false);
   };
 
   return (
     <button
       onClick={handleVouch}
-      disabled={hasVouched}
+      disabled={hasVouched || loading}
       className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all ${
         hasVouched
           ? "bg-accent/10 text-accent border border-accent/20 cursor-default"

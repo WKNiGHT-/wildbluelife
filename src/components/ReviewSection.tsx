@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import StarRating from "@/components/StarRating";
+import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 
 interface Review {
@@ -97,17 +98,41 @@ function ShareButton({ businessName }: ShareButtonProps) {
 }
 
 interface HelpfulButtonProps {
-  reviewIndex: number;
+  businessName: string;
+  reviewer: string;
 }
 
-function HelpfulButton({ reviewIndex }: HelpfulButtonProps) {
+function HelpfulButton({ businessName, reviewer }: HelpfulButtonProps) {
   const [count, setCount] = useState(0);
   const [clicked, setClicked] = useState(false);
 
-  const handleClick = () => {
-    if (!clicked) {
+  useEffect(() => {
+    const storageKey = `helpful_${businessName}_${reviewer}`;
+    if (localStorage.getItem(storageKey)) {
+      setClicked(true);
+    }
+
+    supabase
+      .from("helpful_votes")
+      .select("id", { count: "exact", head: true })
+      .eq("business_name", businessName)
+      .eq("reviewer", reviewer)
+      .then(({ count: c }) => {
+        if (c !== null) setCount(c);
+      });
+  }, [businessName, reviewer]);
+
+  const handleClick = async () => {
+    if (clicked) return;
+
+    const { error } = await supabase
+      .from("helpful_votes")
+      .insert({ business_name: businessName, reviewer });
+
+    if (!error) {
       setCount((prev) => prev + 1);
       setClicked(true);
+      localStorage.setItem(`helpful_${businessName}_${reviewer}`, "true");
     }
   };
 
@@ -304,7 +329,7 @@ export default function ReviewSection({
               {review.content}
             </p>
             {/* Helpful button */}
-            <HelpfulButton reviewIndex={idx} />
+            <HelpfulButton businessName={businessName} reviewer={review.reviewer} />
           </div>
         ))}
       </div>
