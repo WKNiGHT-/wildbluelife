@@ -1,0 +1,116 @@
+{
+  "siteNavigation": {
+    "primaryMenu": [
+      {
+        "label": "Home",
+        "url": "https://www.wildbluelife.com/",
+        "children": []
+      },
+      {
+        "label": "Recommendations",
+        "url": "#",
+        "children": [
+          {
+            "label": "Recommendations and Reviews",
+            "url": "https://www.wildbluelife.com/"
+          },
+          {
+            "label": "Suggest a Company",
+            "url": "https://www.wildbluelife.com/suggest-a-company/"
+          }
+        ]
+      },
+      {
+        "label": "Not Recommended",
+        "url": "#",
+        "children": [
+          {
+            "label": "Not Recommended",
+            "url": "https://www.wildbluelife.com/not-recommended/"
+          },
+          {
+            "label": "Not Recommended Suggestion",
+            "url": "https://www.wildbluelife.com/not-recommended-suggestion/"
+          }
+        ]
+      },
+      {
+        "label": "Court Reservations",
+        "url": "https://floridawildblue.com",
+        "children": [],
+        "note": "External link to floridawildblue.com"
+      },
+      {
+        "label": "Gate Access",
+        "url": "https://gateaccess.net",
+        "children": [],
+        "note": "External link to gateaccess.net"
+      },
+      {
+        "label": "Facebook Groups",
+        "url": "#",
+        "children": [
+          {
+            "label": "Bunco Group",
+            "url": "https://www.facebook.com/groups/wildblue.bunco"
+          },
+          {
+            "label": "Fishing Group",
+            "url": "https://www.facebook.com/groups/wildblue.fishing"
+          },
+          {
+            "label": "Mahjong Group",
+            "url": "https://www.facebook.com/groups/wildblue.mahjong"
+          },
+          {
+            "label": "Pet Owners Group",
+            "url": "https://www.facebook.com/groups/wildblue.petowners"
+          },
+          {
+            "label": "Pickleball Group",
+            "url": "https://www.facebook.com/groups/wildblue.pickleball"
+          },
+          {
+            "label": "Residence Group",
+            "url": "https://www.facebook.com/groups/wildblue.residence"
+          },
+          {
+            "label": "Tennis Group",
+            "url": "https://www.facebook.com/groups/wildblue.tennis"
+          }
+        ]
+      },
+      {
+        "label": "Contact Us",
+        "url": "https://www.wildbluelife.com/contact-us/",
+        "children": []
+      }
+    ],
+    "additionalPages": [
+      {
+        "label": "Advertise With Us",
+        "url": "https://www.wildbluelife.com/advertise-with-us/"
+      },
+      {
+        "label": "Forum / Community",
+        "url": "https://www.wildbluelife.com/community/"
+      }
+    ]
+  },
+  "communityInfo": {
+    "communityName": "Wildblue",
+    "location": "Fort Myers, FL",
+    "description": "Exclusive community nestled on 800 acres of pristine freshwater with luxury lakefront living",
+    "homes": "1,000+",
+    "garbageRecyclePickup": "Friday",
+    "roamingSecurity": {
+      "company": "Ramco",
+      "phone": "(239) 826-0818"
+    },
+    "hoaContact": {
+      "name": "Karen Murphy, CAM",
+      "company": "Icon Management",
+      "phone": "(570) 815-0344"
+    }
+  }
+}
