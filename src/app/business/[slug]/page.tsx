@@ -4,6 +4,7 @@ import StarRating from "@/components/StarRating";
 import ReviewSection, { ShareButton } from "@/components/ReviewSection";
 import VouchButton from "@/components/VouchButton";
 import ShareButtons from "@/components/ShareButtons";
+import PhotoGallery from "@/components/PhotoGallery";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -156,6 +157,9 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
         )}
+
+        {/* Photo Gallery */}
+        <PhotoGallery businessSlug={slug} />
 
         {/* Community Trust Section */}
         <div className="mt-6 rounded-2xl border border-warm-gray-200 bg-gradient-to-br from-white to-accent/5 p-6 shadow-sm">

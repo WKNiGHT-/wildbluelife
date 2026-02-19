@@ -3,6 +3,8 @@
 import { useState, FormEvent } from "react";
 import { categories } from "@/data/listings";
 import StarRating from "@/components/StarRating";
+import PhotoUpload, { uploadDeferredPhotos } from "@/components/PhotoUpload";
+import { slugify } from "@/lib/supabase";
 
 export default function SuggestCompany() {
   const [formData, setFormData] = useState({
@@ -14,11 +16,22 @@ export default function SuggestCompany() {
     review: "",
     recommendedBy: "",
   });
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // TODO: Connect to Supabase
+    setSubmitting(true);
+
+    // Upload deferred photos if any
+    if (photoFiles.length > 0) {
+      const businessSlug = slugify(formData.companyName);
+      await uploadDeferredPhotos(photoFiles, businessSlug, formData.recommendedBy);
+    }
+
+    // TODO: Connect rest of form to Supabase
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -38,6 +51,7 @@ export default function SuggestCompany() {
           <button
             onClick={() => {
               setSubmitted(false);
+              setPhotoFiles([]);
               setFormData({
                 category: "",
                 companyName: "",
@@ -175,6 +189,17 @@ export default function SuggestCompany() {
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-warm-gray-900 mb-2">
+              Photos
+            </label>
+            <PhotoUpload
+              businessSlug={slugify(formData.companyName || "draft")}
+              mode="deferred"
+              onFilesChange={setPhotoFiles}
+            />
+          </div>
+
+          <div>
             <label htmlFor="recommendedBy" className="block text-sm font-medium text-warm-gray-900">
               Recommended By <span className="text-danger">*</span>
             </label>
@@ -191,9 +216,10 @@ export default function SuggestCompany() {
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors"
+            disabled={submitting}
+            className="w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors disabled:opacity-50"
           >
-            Submit Recommendation
+            {submitting ? "Submitting..." : "Submit Recommendation"}
           </button>
         </form>
       </div>
