@@ -8,7 +8,15 @@ export const metadata: Metadata = {
 };
 
 export default function PrintDirectory() {
-  const byCategory = getBusinessesByCategory();
+  const allByCategory = getBusinessesByCategory();
+  // Filter out businesses with 0-2 star ratings
+  const byCategory: Record<string, typeof allByCategory[string]> = {};
+  for (const [category, businesses] of Object.entries(allByCategory)) {
+    const filtered = businesses.filter((biz) => biz.rating === 0 || biz.rating > 2);
+    if (filtered.length > 0) {
+      byCategory[category] = filtered;
+    }
+  }
   const categoryNames = Object.keys(byCategory);
   const totalBusinesses = Object.values(byCategory).reduce(
     (sum, list) => sum + list.length,
