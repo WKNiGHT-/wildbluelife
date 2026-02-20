@@ -92,3 +92,26 @@ html {
 .animate-lightbox-in {
   animation: lightbox-in 0.2s ease-out;
 }
+
+/* Print styles */
+@media print {
+  header,
+  footer,
+  .print-hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11px !important;
+  }
+
+  main {
+    min-height: auto !important;
+  }
+
+  * {
+    box-shadow: none !important;
+  }
+}

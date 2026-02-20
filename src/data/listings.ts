@@ -47,9 +47,8 @@ export const businesses: Business[] = [
   { name: "Byrus Signature Touch", phone: "(239) 920-8746", rating: 0, reviewCount: 0, category: "Carpentry" },
   { name: "Great Scott's Custom Cabinets", phone: "(239) 634-4355", rating: 0, reviewCount: 0, category: "Carpentry" },
   { name: "In and Out Improvement", phone: "(571) 334-4005", rating: 0, reviewCount: 0, category: "Carpentry" },
-  { name: "Straightline Custom Finishing", phone: "(414) 243-9602", rating: 4, reviewCount: 5, category: "Carpentry", recommendedBy: ["Kimberly Molenhouse", "Louis Vaccarella", "Kevin Prather", "Wendy Hanebrink"], vouches: 15 },
+  { name: "Straightline Custom Finishing", phone: "(414) 243-9602", rating: 4, reviewCount: 5, category: "Carpentry", recommendedBy: ["Kimberly Molenhouse", "Louis Vaccarella", "Kevin Prather", "Wendy Hanebrink", "Gary & Nancy Lemon"], vouches: 18 },
   { name: "Revlinc", phone: "(239) 285-4269", rating: 3, reviewCount: 2, category: "Carpentry", contact: "Donny Bender" },
-  { name: "Straight Line Custom Finishing LLC", phone: "(414) 243-9602", rating: 5, reviewCount: 0, category: "Carpentry", recommendedBy: ["Gary & Nancy Lemon"], vouches: 3 },
   { name: "JGF Construction", phone: "(239) 747-3853", rating: 5, reviewCount: 0, category: "Carpentry", recommendedBy: ["Denis Bourque"], vouches: 2 },
 
   // Catering Companies
