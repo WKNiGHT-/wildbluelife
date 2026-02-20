@@ -142,7 +142,7 @@ export const reviewsByBusiness: BusinessReviews[] = [
       { reviewer: "K Smith", date: "2025-10-13", rating: 5, title: "Several years of service", content: "We've used Rob for several years now. He does lots of miscellaneous projects..." },
     ],
   },
-  // === Recovered reviews from web search ===
+  // === Recovered reviews from web search (round 1) ===
   {
     businessName: "Amberjack Marine Construction",
     category: "Boat Docks",
@@ -355,6 +355,46 @@ export const reviewsByBusiness: BusinessReviews[] = [
     totalReviews: 1,
     reviews: [
       { reviewer: "Wildblue Resident", date: "2023-02-01", rating: 5, title: "Highly recommend", content: "Highly recommend U-Topia Spa in the Amenity Center." },
+    ],
+  },
+  // === Recovered reviews from web search (round 2) ===
+  {
+    businessName: "Smart Pools",
+    category: "Pool Service",
+    phone: "(239) 601-2028",
+    overallRating: 4.0,
+    totalReviews: 1,
+    reviews: [
+      { reviewer: "Wildblue Resident", date: null, rating: 4, title: "Great job but recent issues", content: "Used Smart Pools for about 6 months and they did a great job, sending weekly pictures of the pool after service and it always looked clean. However, in recent weeks had algae in the pool in some spots, was told the company was having problems keeping up with chemicals, and an employee left the pool dirty without cleaning trouble spots that were pointed out. Had to reduce rating from 5 stars to 4 stars due to the employee leaving the pool dirty." },
+    ],
+  },
+  {
+    businessName: "Limoncello Italian Restaurant",
+    category: "Restaurants",
+    overallRating: 5.0,
+    totalReviews: 1,
+    reviews: [
+      { reviewer: "Wildblue Resident", date: null, rating: 5, title: "Fantastic food and great atmosphere", content: "The food is fantastic, and there's often live music that's not too loud, creating a great atmosphere. The owner clearly takes pride in the restaurant. Since it's a busy spot, reservations are recommended." },
+    ],
+  },
+  {
+    businessName: "Caffè da Michele Osteria Italiana",
+    category: "Restaurants",
+    overallRating: 4.0,
+    totalReviews: 5,
+    reviews: [
+      { reviewer: "Wildblue Resident", date: null, rating: 5, title: "Enjoyed the meal, owner shared wine from Italy", content: "Really enjoyed the meal. The owner shared some wine from Italy and we were able to enjoy a few glasses. Close to Wildblue with a relaxed, casual dining atmosphere." },
+      { reviewer: "Wildblue Resident", date: null, rating: 2, title: "Sub-par experience with service issues", content: "Sub-par experience with long wait times and issues with seating preferences. Requested outdoor seating on the reservation but the restaurant tried to get us to dine inside. Poor, unprofessional, and slow service." },
+    ],
+  },
+  {
+    businessName: "Baires Pool Service",
+    category: "Pool Service",
+    phone: "(239) 938-6562",
+    overallRating: 5.0,
+    totalReviews: 1,
+    reviews: [
+      { reviewer: "Wildblue Resident", date: null, rating: 5, title: "Reliable and hard-working", content: "Never had an issue with Baires Pool Service. They are reliable and hard-working people." },
     ],
   },
 ];
