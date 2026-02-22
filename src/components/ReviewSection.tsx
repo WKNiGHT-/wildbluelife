@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import StarRating from "@/components/StarRating";
+import ReviewForm from "@/components/ReviewForm";
 import { supabase } from "@/lib/supabase";
-import Link from "next/link";
 
 interface Review {
   reviewer: string;
@@ -180,9 +180,43 @@ export default function ReviewSection({
   businessName,
 }: ReviewSectionProps) {
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [submittedReviews, setSubmittedReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("submitted_reviews")
+      .select("reviewer, rating, title, content, created_at")
+      .eq("business_name", businessName)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) {
+          setSubmittedReviews(
+            data.map((r) => ({
+              reviewer: r.reviewer,
+              date: r.created_at,
+              rating: r.rating,
+              title: r.title,
+              content: r.content,
+            }))
+          );
+        }
+      });
+  }, [businessName]);
+
+  const handleReviewSubmitted = useCallback(
+    (review: Review) => {
+      setSubmittedReviews((prev) => [review, ...prev]);
+    },
+    []
+  );
+
+  const allReviews = useMemo(
+    () => [...reviews, ...submittedReviews],
+    [reviews, submittedReviews]
+  );
 
   const sortedReviews = useMemo(() => {
-    const sorted = [...reviews];
+    const sorted = [...allReviews];
     switch (sortBy) {
       case "newest":
         return sorted.sort((a, b) => {
@@ -198,15 +232,14 @@ export default function ReviewSection({
       default:
         return sorted;
     }
-  }, [reviews, sortBy]);
+  }, [allReviews, sortBy]);
 
-  // Empty state
-  if (!reviews || reviews.length === 0) {
+  // Empty state — no static or submitted reviews yet
+  if (allReviews.length === 0) {
     return (
       <div className="mt-8">
         <h2 className="text-xl font-bold text-warm-gray-900 mb-6">Reviews</h2>
-        <div className="rounded-2xl border-2 border-dashed border-warm-gray-200 bg-gradient-to-b from-warm-gray-50 to-white py-16 text-center px-6">
-          {/* Friendly illustration */}
+        <div className="rounded-2xl border-2 border-dashed border-warm-gray-200 bg-gradient-to-b from-warm-gray-50 to-white py-16 text-center px-6 mb-6">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
             <svg
               className="h-10 w-10 text-primary"
@@ -228,26 +261,11 @@ export default function ReviewSection({
           <p className="mt-2 text-sm text-warm-gray-500 max-w-md mx-auto">
             Your neighbors want to hear about your experience
           </p>
-          <Link
-            href="/suggest"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-md hover:bg-primary-dark transition-colors"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            Write a Review
-          </Link>
         </div>
+        <ReviewForm
+          businessName={businessName}
+          onReviewSubmitted={handleReviewSubmitted}
+        />
       </div>
     );
   }
@@ -259,7 +277,7 @@ export default function ReviewSection({
         <h2 className="text-xl font-bold text-warm-gray-900">
           Reviews
           <span className="ml-2 text-sm font-normal text-warm-gray-500">
-            ({reviews.length} shown)
+            ({allReviews.length} shown)
           </span>
         </h2>
         <div className="flex items-center gap-2">
@@ -332,6 +350,14 @@ export default function ReviewSection({
             <HelpfulButton businessName={businessName} reviewer={review.reviewer} />
           </div>
         ))}
+      </div>
+
+      {/* Write a review form */}
+      <div className="mt-6">
+        <ReviewForm
+          businessName={businessName}
+          onReviewSubmitted={handleReviewSubmitted}
+        />
       </div>
     </div>
   );

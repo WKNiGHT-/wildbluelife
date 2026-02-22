@@ -61,6 +61,25 @@ CREATE POLICY "Anyone can read helpful votes" ON helpful_votes FOR SELECT USING 
 CREATE POLICY "Anyone can insert helpful votes" ON helpful_votes FOR INSERT WITH CHECK (true);
 
 -- =============================================
+-- Submitted Reviews (user-submitted reviews on business pages)
+-- =============================================
+
+CREATE TABLE submitted_reviews (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  business_name text NOT NULL,
+  reviewer text NOT NULL,
+  rating integer NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  title text NOT NULL,
+  content text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE submitted_reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read reviews" ON submitted_reviews FOR SELECT USING (true);
+CREATE POLICY "Anyone can insert reviews" ON submitted_reviews FOR INSERT WITH CHECK (true);
+
+-- =============================================
 -- Photo Uploads
 -- =============================================
 
