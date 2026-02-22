@@ -1,9 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { businesses } from "@/data/listings";
 import CategorySection from "@/components/CategorySection";
 import CategoryNav from "@/components/CategoryNav";
+
+function categoryToId(category: string) {
+  return category.toLowerCase().replace(/[\s/&]+/g, "-");
+}
 
 export default function FullDirectory() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -23,12 +27,34 @@ export default function FullDirectory() {
     return sorted;
   }, []);
 
-  const handleCategoryClick = (category: string) => {
-    setActiveCategory(category);
-    const el = document.getElementById(category.toLowerCase().replace(/[\s/&]+/g, "-"));
+  const scrollToCategory = useCallback((id: string) => {
+    const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  }, []);
+
+  // On mount, check for a hash in the URL and scroll to that category
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      // Find the matching category name for the hash
+      const match = Object.keys(groupedBusinesses).find(
+        (cat) => categoryToId(cat) === hash
+      );
+      if (match) {
+        setActiveCategory(match);
+        // Small delay to ensure the DOM is rendered
+        setTimeout(() => scrollToCategory(hash), 100);
+      }
+    }
+  }, [groupedBusinesses, scrollToCategory]);
+
+  const handleCategoryClick = (category: string) => {
+    const id = categoryToId(category);
+    setActiveCategory(category);
+    window.history.replaceState(null, "", `#${id}`);
+    scrollToCategory(id);
   };
 
   return (
