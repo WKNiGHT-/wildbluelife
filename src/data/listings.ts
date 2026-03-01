@@ -311,7 +311,7 @@ export const businesses: Business[] = [
   { name: "Diamond Shine Windows", phone: "(239) 822-5853", rating: 0, reviewCount: 0, category: "Window Washing" },
   { name: "Tropical Window Washing", phone: "(239) 789-8738", rating: 5, reviewCount: 1, category: "Window Washing" },
   { name: "Wagner Window Washing", phone: "(239) 594-5433", rating: 5, reviewCount: 2, category: "Window Washing" },
-  { name: "Clean Me Window Washing", phone: "(941) 479-9595", rating: 5, reviewCount: 0, category: "Window Washing" },
+  { name: "Clean Me Window Washing", phone: "(941) 479-9595", rating: 5, reviewCount: 0, category: "Window Washing", recommendedBy: ["Kathleen Logan Nonnamaker"] },
 ];
 
 export const categories = [...new Set(businesses.map((b) => b.category))].sort();
