@@ -14,6 +14,27 @@ interface ReviewFormProps {
   }) => void;
 }
 
+const QUICK_TAGS = [
+  "On Time",
+  "Fair Price",
+  "Great Communication",
+  "Would Hire Again",
+  "Quality Work",
+];
+
+const PRICE_OPTIONS = [
+  { label: "$", desc: "Budget-friendly" },
+  { label: "$$", desc: "Average" },
+  { label: "$$$", desc: "Above average" },
+  { label: "$$$$", desc: "Premium" },
+];
+
+function formatDisplayName(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length < 2) return name.trim();
+  return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+}
+
 export default function ReviewForm({
   businessName,
   onReviewSubmitted,
@@ -23,6 +44,9 @@ export default function ReviewForm({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [reviewer, setReviewer] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [hiredFor, setHiredFor] = useState("");
+  const [priceRange, setPriceRange] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -32,10 +56,25 @@ export default function ReviewForm({
     if (saved) setReviewer(saved);
   }, []);
 
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
+
+    // Build the full content with tags, hired-for, and price prepended
+    const extras: string[] = [];
+    if (selectedTags.length > 0) extras.push(`Tags: ${selectedTags.join(", ")}`);
+    if (hiredFor) extras.push(`Hired for: ${hiredFor}`);
+    if (priceRange) extras.push(`Price: ${priceRange}`);
+    const fullContent = extras.length > 0
+      ? `${extras.join(" | ")}\n\n${content.trim()}`
+      : content.trim();
 
     const { error: insertError } = await supabase
       .from("submitted_reviews")
@@ -44,7 +83,7 @@ export default function ReviewForm({
         reviewer: reviewer.trim(),
         rating,
         title: title.trim(),
-        content: content.trim(),
+        content: fullContent,
       });
 
     if (insertError) {
@@ -60,7 +99,7 @@ export default function ReviewForm({
       date: new Date().toISOString(),
       rating,
       title: title.trim(),
-      content: content.trim(),
+      content: fullContent,
     });
 
     setSubmitting(false);
@@ -72,6 +111,9 @@ export default function ReviewForm({
     setRating(5);
     setTitle("");
     setContent("");
+    setSelectedTags([]);
+    setHiredFor("");
+    setPriceRange("");
     setError("");
   };
 
@@ -115,6 +157,7 @@ export default function ReviewForm({
         Write a Review
       </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Rating */}
         <div>
           <label className="block text-sm font-medium text-warm-gray-900 mb-2">
             Rating <span className="text-danger">*</span>
@@ -149,6 +192,88 @@ export default function ReviewForm({
           </div>
         </div>
 
+        {/* Quick-select tags */}
+        <div>
+          <label className="block text-sm font-medium text-warm-gray-900 mb-2">
+            Quick Tags
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {QUICK_TAGS.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => toggleTag(tag)}
+                className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                  selectedTags.includes(tag)
+                    ? "bg-primary text-white"
+                    : "bg-warm-gray-100 text-warm-gray-600 hover:bg-warm-gray-200"
+                }`}
+              >
+                {selectedTags.includes(tag) && (
+                  <svg className="mr-1 -ml-0.5 inline h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Hired for dropdown */}
+        <div>
+          <label
+            htmlFor="hired-for"
+            className="block text-sm font-medium text-warm-gray-900"
+          >
+            What did you hire them for?
+          </label>
+          <select
+            id="hired-for"
+            value={hiredFor}
+            onChange={(e) => setHiredFor(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-warm-gray-200 bg-white px-4 py-3 text-warm-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">Select...</option>
+            <option value="New Installation">New Installation</option>
+            <option value="Repair">Repair</option>
+            <option value="Maintenance">Maintenance</option>
+            <option value="Consultation">Consultation</option>
+            <option value="Remodel / Renovation">Remodel / Renovation</option>
+            <option value="Inspection">Inspection</option>
+            <option value="Emergency Service">Emergency Service</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        {/* Price range */}
+        <div>
+          <label className="block text-sm font-medium text-warm-gray-900 mb-2">
+            Price Range
+          </label>
+          <div className="flex gap-2">
+            {PRICE_OPTIONS.map((opt) => (
+              <button
+                key={opt.label}
+                type="button"
+                onClick={() => setPriceRange(priceRange === opt.label ? "" : opt.label)}
+                title={opt.desc}
+                className={`flex-1 rounded-lg border py-2.5 text-sm font-semibold transition-colors ${
+                  priceRange === opt.label
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-warm-gray-200 text-warm-gray-500 hover:bg-warm-gray-50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1 text-xs text-warm-gray-400">
+            $ Budget &middot; $$ Average &middot; $$$ Above average &middot; $$$$ Premium
+          </p>
+        </div>
+
+        {/* Title */}
         <div>
           <label
             htmlFor="review-title"
@@ -167,6 +292,7 @@ export default function ReviewForm({
           />
         </div>
 
+        {/* Review content */}
         <div>
           <label
             htmlFor="review-content"
@@ -185,6 +311,7 @@ export default function ReviewForm({
           />
         </div>
 
+        {/* Reviewer name */}
         <div>
           <label
             htmlFor="review-name"
@@ -201,6 +328,9 @@ export default function ReviewForm({
             placeholder="Your name"
             className="mt-1 w-full rounded-xl border border-warm-gray-200 bg-white px-4 py-3 text-warm-gray-900 placeholder:text-warm-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
+          <p className="mt-1 text-xs text-warm-gray-400">
+            Displays as {reviewer.trim() ? formatDisplayName(reviewer) : "First Name + Last Initial"} (e.g., Fred F.)
+          </p>
         </div>
 
         {error && (
