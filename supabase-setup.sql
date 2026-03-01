@@ -154,3 +154,11 @@ ALTER TABLE reported_businesses ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Anyone can read reported businesses" ON reported_businesses FOR SELECT USING (true);
 CREATE POLICY "Anyone can insert reported businesses" ON reported_businesses FOR INSERT WITH CHECK (true);
+
+-- =============================================
+-- DELETE policies (for admin dashboard cleanup)
+-- =============================================
+
+CREATE POLICY "Anyone can delete suggested businesses" ON suggested_businesses FOR DELETE USING (true);
+CREATE POLICY "Anyone can delete reported businesses" ON reported_businesses FOR DELETE USING (true);
+CREATE POLICY "Anyone can delete reviews" ON submitted_reviews FOR DELETE USING (true);
