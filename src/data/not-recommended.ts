@@ -12,6 +12,7 @@ export const notRecommendedBusinesses: NotRecommendedBusiness[] = [
   { name: "The Groutsmith", reason: "Not recommended" },
   { name: "Pro Home Service - Alex Drewett", reason: "Scam" },
   { name: "Overall Outdoor Services", reason: "Continues to SPAM the groups acting like Residence. Stay away." },
+  { name: "Walther Pest Control", reason: "Constant employee turnover, spray all over windows and doors, not hitting the base of the house causing massive staining. Using gate access and not showing up for hours." },
 ];
 
 export const warnings = [
