@@ -27,31 +27,31 @@ export default function BusinessCard({ business }: BusinessCardProps) {
   return (
     <Link
       href={`/business/${slugify(business.name)}`}
-      className={`group block rounded-xl border p-5 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+      className={`group block rounded-xl border-2 p-5 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5 ${
         business.notRecommended
-          ? "border-danger/30 bg-danger/5 hover:border-danger"
+          ? "border-danger bg-red-700 hover:bg-red-800"
           : "border-warm-gray-200 bg-white hover:border-secondary"
       }`}
     >
       {business.notRecommended && (
-        <span className="mb-2 inline-flex items-center gap-1 rounded-full bg-danger/10 px-2.5 py-0.5 text-xs font-semibold text-danger">
+        <span className="mb-2 inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-bold text-white">
           <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
-          Not Recommended
+          NOT RECOMMENDED
         </span>
       )}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h3 className={`text-base font-semibold transition-colors ${
             business.notRecommended
-              ? "text-danger group-hover:text-danger"
+              ? "text-white"
               : "text-warm-gray-900 group-hover:text-primary"
           }`}>
             {business.name}
           </h3>
           {business.phone ? (
-            <span className="mt-1 inline-flex items-center gap-1.5 text-sm text-secondary">
+            <span className={`mt-1 inline-flex items-center gap-1.5 text-sm ${business.notRecommended ? "text-white/80" : "text-secondary"}`}>
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -66,7 +66,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
             <span className="mt-1 text-sm text-warm-gray-500">{business.location}</span>
           ) : null}
         </div>
-        <div className="shrink-0 rounded-lg bg-secondary/10 p-2 text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
+        <div className={`shrink-0 rounded-lg p-2 transition-colors ${business.notRecommended ? "bg-white/20 text-white" : "bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white"}`}>
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -74,7 +74,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
       </div>
       <div className="mt-3 flex items-center gap-2">
         <StarRating rating={business.rating} size="sm" />
-        <span className="text-xs text-warm-gray-500">
+        <span className={`text-xs ${business.notRecommended ? "text-white/60" : "text-warm-gray-500"}`}>
           ({business.reviewCount} {business.reviewCount === 1 ? "review" : "reviews"})
         </span>
       </div>
