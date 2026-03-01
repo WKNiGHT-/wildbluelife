@@ -179,6 +179,9 @@ export const businesses: Business[] = [
   { name: "Stahlman Landscaping", phone: "(239) 963-6837", rating: 0, reviewCount: 0, category: "Landscaping" },
   { name: "Weeks Landscaping", phone: "(239) 936-2456", rating: 0, reviewCount: 0, category: "Landscaping" },
 
+  // Lawn Service
+  { name: "TrueGreen", phone: null, rating: 1, reviewCount: 0, category: "Lawn Service", notRecommended: true },
+
   // Landscape Lighting
   { name: "Elegant Lighting", phone: "(239) 734-0100", rating: 0, reviewCount: 0, category: "Landscape Lighting" },
   { name: "Gator Outdoor Lighting", phone: "(239) 440-2244", rating: 0, reviewCount: 0, category: "Landscape Lighting" },
