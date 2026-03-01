@@ -12,6 +12,7 @@ export interface Business {
   website?: string;
   recommendedBy?: string[];
   vouches?: number;
+  notRecommended?: boolean;
 }
 
 interface BusinessCardProps {
@@ -26,11 +27,27 @@ export default function BusinessCard({ business }: BusinessCardProps) {
   return (
     <Link
       href={`/business/${slugify(business.name)}`}
-      className="group block rounded-xl border border-warm-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-lg hover:border-secondary hover:-translate-y-0.5"
+      className={`group block rounded-xl border p-5 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+        business.notRecommended
+          ? "border-danger/30 bg-danger/5 hover:border-danger"
+          : "border-warm-gray-200 bg-white hover:border-secondary"
+      }`}
     >
+      {business.notRecommended && (
+        <span className="mb-2 inline-flex items-center gap-1 rounded-full bg-danger/10 px-2.5 py-0.5 text-xs font-semibold text-danger">
+          <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          Not Recommended
+        </span>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-semibold text-warm-gray-900 group-hover:text-primary transition-colors">
+          <h3 className={`text-base font-semibold transition-colors ${
+            business.notRecommended
+              ? "text-danger group-hover:text-danger"
+              : "text-warm-gray-900 group-hover:text-primary"
+          }`}>
             {business.name}
           </h3>
           {business.phone ? (

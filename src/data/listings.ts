@@ -9,6 +9,7 @@ export interface Business {
   website?: string;
   recommendedBy?: string[];
   vouches?: number;
+  notRecommended?: boolean;
 }
 
 export const businesses: Business[] = [
@@ -219,6 +220,7 @@ export const businesses: Business[] = [
   { name: "All U Need Pest Control", phone: "(239) 424-8742", rating: 3, reviewCount: 2, category: "Pest Control" },
   { name: "Waves Pest Control", phone: "(941) 297-5749", rating: 5, reviewCount: 0, category: "Pest Control", recommendedBy: ["David Andrukaitis"], vouches: 2 },
   { name: "Greenhouse Termite and Pest Control", phone: "(813) 991-0033", rating: 5, reviewCount: 0, category: "Pest Control" },
+  { name: "Walther Pest Control", phone: "(239) 994-5656", rating: 1, reviewCount: 1, category: "Pest Control", notRecommended: true },
 
   // Pet Groomers
   { name: "Dipidy Dawg", phone: "(239) 949-9885", rating: 0, reviewCount: 0, category: "Pet Groomers" },
