@@ -1,6 +1,28 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { notRecommendedBusinesses, warnings } from "@/data/not-recommended";
+import { supabase } from "@/lib/supabase";
+
+interface ReportedBusiness {
+  id: number;
+  company_name: string;
+  reason: string;
+  submitted_by: string;
+  created_at: string;
+}
 
 export default function NotRecommended() {
+  const [reported, setReported] = useState<ReportedBusiness[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("reported_businesses")
+      .select()
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setReported((data as ReportedBusiness[]) || []));
+  }, []);
+
   return (
     <div className="py-12">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -45,6 +67,29 @@ export default function NotRecommended() {
                 </div>
                 <span className="shrink-0 rounded-full bg-danger/10 px-2.5 py-0.5 text-xs font-medium text-danger">
                   Not Recommended
+                </span>
+              </div>
+            </div>
+          ))}
+
+          {/* Community-reported businesses from Supabase */}
+          {reported.map((r) => (
+            <div
+              key={`reported-${r.id}`}
+              className="rounded-xl border border-warm-gray-200 bg-white p-5 shadow-sm"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-base font-semibold text-warm-gray-900">
+                    {r.company_name}
+                  </h3>
+                  <p className="mt-1 text-sm text-warm-gray-700">{r.reason}</p>
+                  <p className="mt-1 text-xs text-warm-gray-400">
+                    Reported by {r.submitted_by}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full bg-danger/10 px-2.5 py-0.5 text-xs font-medium text-danger">
+                  Community Report
                 </span>
               </div>
             </div>

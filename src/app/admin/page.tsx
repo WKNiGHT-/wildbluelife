@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { categories } from "@/data/listings";
 
 type Tab = "suggestions" | "reports" | "reviews";
 
@@ -72,6 +73,23 @@ export default function AdminDashboard() {
   const [reports, setReports] = useState<Report[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const copySuggestion = (s: Suggestion) => {
+    const entry = `  { name: "${s.company_name}", phone: ${s.phone ? `"${s.phone}"` : "null"}, rating: ${s.rating}, reviewCount: ${s.review ? 1 : 0}, category: "${s.category}"${s.contact_person ? `, contact: "${s.contact_person}"` : ""}${s.recommended_by ? `, recommendedBy: ["${s.recommended_by}"]` : ""} },`;
+    copyToClipboard(entry, `sug-${s.id}`);
+  };
+
+  const copyReport = (r: Report) => {
+    const entry = `  { name: "${r.company_name}", reason: "${r.reason.replace(/"/g, '\\"')}" },`;
+    copyToClipboard(entry, `rep-${r.id}`);
+  };
 
   // Check sessionStorage on mount
   useEffect(() => {
@@ -223,12 +241,20 @@ export default function AdminDashboard() {
                           </p>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleDelete("suggested_businesses", s.id)}
-                        className="shrink-0 rounded-lg border border-warm-gray-200 px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger/5 transition-colors"
-                      >
-                        Delete
-                      </button>
+                      <div className="flex shrink-0 gap-2">
+                        <button
+                          onClick={() => copySuggestion(s)}
+                          className="rounded-lg border border-warm-gray-200 px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/5 transition-colors"
+                        >
+                          {copiedId === `sug-${s.id}` ? "Copied!" : "Approve"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete("suggested_businesses", s.id)}
+                          className="rounded-lg border border-warm-gray-200 px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger/5 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -251,12 +277,20 @@ export default function AdminDashboard() {
                           By {r.submitted_by} &middot; {formatDate(r.created_at)}
                         </p>
                       </div>
-                      <button
-                        onClick={() => handleDelete("reported_businesses", r.id)}
-                        className="shrink-0 rounded-lg border border-warm-gray-200 px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger/5 transition-colors"
-                      >
-                        Delete
-                      </button>
+                      <div className="flex shrink-0 gap-2">
+                        <button
+                          onClick={() => copyReport(r)}
+                          className="rounded-lg border border-warm-gray-200 px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/5 transition-colors"
+                        >
+                          {copiedId === `rep-${r.id}` ? "Copied!" : "Approve"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete("reported_businesses", r.id)}
+                          className="rounded-lg border border-warm-gray-200 px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger/5 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
