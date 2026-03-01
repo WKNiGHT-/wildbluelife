@@ -116,3 +116,41 @@ CREATE POLICY "Anyone can insert review photos" ON review_photos FOR INSERT WITH
 -- Then run these policies:
 -- CREATE POLICY "Public read photos" ON storage.objects FOR SELECT USING (bucket_id = 'photos');
 -- CREATE POLICY "Anyone can upload photos" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'photos');
+
+-- =============================================
+-- Suggested Businesses (from /suggest form)
+-- =============================================
+
+CREATE TABLE suggested_businesses (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  category text NOT NULL,
+  company_name text NOT NULL,
+  phone text,
+  contact_person text,
+  rating integer NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  review text,
+  recommended_by text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE suggested_businesses ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read suggested businesses" ON suggested_businesses FOR SELECT USING (true);
+CREATE POLICY "Anyone can insert suggested businesses" ON suggested_businesses FOR INSERT WITH CHECK (true);
+
+-- =============================================
+-- Reported Businesses (from /not-recommended/submit form)
+-- =============================================
+
+CREATE TABLE reported_businesses (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  company_name text NOT NULL,
+  reason text NOT NULL,
+  submitted_by text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE reported_businesses ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read reported businesses" ON reported_businesses FOR SELECT USING (true);
+CREATE POLICY "Anyone can insert reported businesses" ON reported_businesses FOR INSERT WITH CHECK (true);

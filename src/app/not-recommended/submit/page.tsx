@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function SubmitNotRecommended() {
   const [formData, setFormData] = useState({
@@ -8,11 +9,30 @@ export default function SubmitNotRecommended() {
     reason: "",
     submittedBy: "",
   });
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // TODO: Connect to Supabase
+    setError("");
+    setSubmitting(true);
+
+    const { error: insertError } = await supabase
+      .from("reported_businesses")
+      .insert({
+        company_name: formData.companyName.trim(),
+        reason: formData.reason.trim(),
+        submitted_by: formData.submittedBy.trim(),
+      });
+
+    if (insertError) {
+      setError("Something went wrong. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -88,11 +108,16 @@ export default function SubmitNotRecommended() {
             />
           </div>
 
+          {error && (
+            <p className="text-sm text-danger">{error}</p>
+          )}
+
           <button
             type="submit"
-            className="w-full rounded-xl bg-danger px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-opacity"
+            disabled={submitting}
+            className="w-full rounded-xl bg-danger px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            Submit Report
+            {submitting ? "Submitting..." : "Submit Report"}
           </button>
         </form>
       </div>

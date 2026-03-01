@@ -4,7 +4,7 @@ import { useState, FormEvent } from "react";
 import { categories } from "@/data/listings";
 import StarRating from "@/components/StarRating";
 import PhotoUpload, { uploadDeferredPhotos } from "@/components/PhotoUpload";
-import { slugify } from "@/lib/supabase";
+import { supabase, slugify } from "@/lib/supabase";
 
 export default function SuggestCompany() {
   const [formData, setFormData] = useState({
@@ -19,9 +19,11 @@ export default function SuggestCompany() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError("");
     setSubmitting(true);
 
     // Upload deferred photos if any
@@ -30,7 +32,24 @@ export default function SuggestCompany() {
       await uploadDeferredPhotos(photoFiles, businessSlug, formData.recommendedBy);
     }
 
-    // TODO: Connect rest of form to Supabase
+    const { error: insertError } = await supabase
+      .from("suggested_businesses")
+      .insert({
+        category: formData.category,
+        company_name: formData.companyName.trim(),
+        phone: formData.phone.trim() || null,
+        contact_person: formData.contactPerson.trim() || null,
+        rating: formData.rating,
+        review: formData.review.trim() || null,
+        recommended_by: formData.recommendedBy.trim(),
+      });
+
+    if (insertError) {
+      setError("Something went wrong. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
     setSubmitting(false);
     setSubmitted(true);
   };
@@ -213,6 +232,10 @@ export default function SuggestCompany() {
               className="mt-1 w-full rounded-xl border border-warm-gray-200 bg-white px-4 py-3 text-warm-gray-900 placeholder:text-warm-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
+
+          {error && (
+            <p className="text-sm text-danger">{error}</p>
+          )}
 
           <button
             type="submit"
