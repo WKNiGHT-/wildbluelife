@@ -2,6 +2,7 @@ import { businesses } from "@/data/listings";
 import { reviewsByBusiness } from "@/data/reviews";
 import StarRating from "@/components/StarRating";
 import ReviewSection, { ShareButton } from "@/components/ReviewSection";
+import PrintButton from "@/components/PrintButton";
 import VouchButton from "@/components/VouchButton";
 import ShareButtons from "@/components/ShareButtons";
 import PhotoGallery from "@/components/PhotoGallery";
@@ -86,6 +87,11 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 )}
                 {/* Share Button (client component) */}
                 <ShareButton businessName={business.name} />
+                {/* Print Button (client component) */}
+                <PrintButton
+                  label="Print"
+                  className="inline-flex items-center gap-2 rounded-xl bg-white/20 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-white/30 transition-colors"
+                />
               </div>
             </div>
           </div>
@@ -213,9 +219,14 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               </div>
               <div>
                 <StarRating rating={reviewData?.overallRating ?? business.rating} size="lg" />
-                <p className="mt-1 text-sm text-warm-gray-500">
-                  Based on {reviewData?.totalReviews ?? business.reviewCount} review{(reviewData?.totalReviews ?? business.reviewCount) !== 1 ? "s" : ""}
-                </p>
+                <div className="mt-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 px-4 py-1.5 text-sm font-bold text-primary">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                    </svg>
+                    {reviewData?.totalReviews ?? business.reviewCount} Review{(reviewData?.totalReviews ?? business.reviewCount) !== 1 ? "s" : ""}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -241,6 +252,47 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
         </div>
+
+        {/* Top Review Highlight */}
+        {reviewData && reviewData.reviews.length > 0 && (() => {
+          const topReview = reviewData.reviews.reduce((best, r) =>
+            r.rating > best.rating ? r : best
+          , reviewData.reviews[0]);
+          const snippet = topReview.content.length > 150
+            ? topReview.content.slice(0, 150).trimEnd() + "..."
+            : topReview.content;
+          return (
+            <div className="mt-8 rounded-2xl border-2 border-transparent bg-white p-6 shadow-sm relative overflow-hidden">
+              {/* Gradient border effect */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary via-accent to-secondary p-[2px]">
+                <div className="h-full w-full rounded-[14px] bg-white" />
+              </div>
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-3">
+                  {/* Quote icon */}
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-accent/10">
+                    <svg className="h-5 w-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-primary">Top Review</h3>
+                  </div>
+                </div>
+                <h4 className="text-lg font-bold text-warm-gray-900">{topReview.title}</h4>
+                <p className="mt-2 text-sm leading-relaxed text-warm-gray-600 italic">
+                  &ldquo;{snippet}&rdquo;
+                </p>
+                <div className="mt-3 flex items-center gap-3 flex-wrap">
+                  <StarRating rating={topReview.rating} size="sm" />
+                  <span className="text-sm font-medium text-warm-gray-700">
+                    &mdash; {topReview.reviewer}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Reviews List (client component with sort, helpful, share) */}
         <ReviewSection

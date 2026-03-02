@@ -29,6 +29,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/how-it-works" className="text-sm hover:text-primary transition-colors">
+                  How It Works
+                </Link>
+              </li>
+              <li>
                 <Link href="/suggest" className="text-sm hover:text-primary transition-colors">
                   Suggest a Company
                 </Link>
